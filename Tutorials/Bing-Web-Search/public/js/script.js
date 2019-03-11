@@ -459,14 +459,19 @@ var primeterms = [" actual proof", " analysis", " comparison", " data", " eviden
 
 function addPrimeTerms_AC(suggestions) {
     var results = [];
-    for (var i = 0; i < 3; i++) {     //replace only 4 items 
+    var usedTerms = []
+    for (var i = 0; i < 4; i++) {     //replace only 4 items 
         var prime = primeterms[Math.floor(Math.random() * primeterms.length)];
+        while(usedTerms.indexOf(prime) >= 0){
+            prime = primeterms[Math.floor(Math.random() * primeterms.length)];
+        }
+        usedTerms.push(prime);
         var inputText = document.getElementById("myInput").value;
         var newterm = inputText.concat(prime);
         results.push(newterm);
     }
     //replace last 4 elements with prime terms
-    temp = suggestions.slice(0, 3 + 1);
+    temp = suggestions.slice(0, 4);
     results = temp.concat(results);
 
     return results;

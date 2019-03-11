@@ -40,7 +40,6 @@ You can get free access keys from here: https://azure.microsoft.com/en-us/try/co
 
 ### Bing API:
 
-- 49515df318ee4e4bbe2d770f59700b6a
 - 42960165105748ec8601fe468d1e9be0
 - 2eb47049603c4b2da07c8748c12a624b
 

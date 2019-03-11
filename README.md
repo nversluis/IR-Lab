@@ -35,3 +35,16 @@ You can get free access keys from here: https://azure.microsoft.com/en-us/try/co
 - Documentation page cognitive services APIs: https://docs.microsoft.com/en-us/azure/#pivot=products&panel=cognitive
 - SDKs in different languages: For C# https://github.com/Azure/azure-sdk-for-net/ and similar folders for other languages.
 - Samples for SDKs: For C# https://github.com/Azure-Samples/cognitive-services-dotnet-sdk-samples and similar for other languages.
+
+## Keys
+
+### Bing API:
+
+- 49515df318ee4e4bbe2d770f59700b6a
+- 42960165105748ec8601fe468d1e9be0
+- 2eb47049603c4b2da07c8748c12a624b
+
+### Bing AutoSuggest:
+
+- 49515df318ee4e4bbe2d770f59700b6a
+- 3ffe6201605c4049b932ff09d7794e2b

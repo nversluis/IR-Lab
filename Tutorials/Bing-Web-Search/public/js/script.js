@@ -1,5 +1,5 @@
 // Do not enter your credentials.
-API_KEY_COOKIE   = "bing-search-api-key";
+API_KEY_COOKIE = "bing-search-api-key";
 CLIENT_ID_COOKIE = "bing-search-client-id";
 
 // Various browsers differ in their support for persistent storage by local
@@ -13,7 +13,7 @@ try {
     window.retrieveValue = function (name) {
         return localStorage.getItem(name) || "";
     }
-    window.storeValue = function(name, value) {
+    window.storeValue = function (name, value) {
         localStorage.setItem(name, value);
     }
 } catch (e) {
@@ -83,7 +83,7 @@ function hideDivs() {
 // Render functions for various types of search results.
 searchItemRenderers = {
     // Render Web page result.
-    webPages: function(item) {
+    webPages: function (item) {
         var html = [];
         html.push("<p class='webPages'><a href='" + item.url + "'>" + item.name + "</a>");
         html.push(" (" + getHost(item.displayUrl) + ")");
@@ -99,14 +99,14 @@ searchItemRenderers = {
         return html.join("");
     },
     // Render news article result.
-    news: function(item) {
+    news: function (item) {
         var html = [];
         html.push("<p class='news'>");
         if (item.image) {
             width = 60;
             height = Math.round(width * item.image.thumbnail.height / item.image.thumbnail.width);
-            html.push("<img src='" +  item.image.thumbnail.contentUrl +
-                "&h=" + height + "&w=" + width + "' width=" + width + " height=" + height+  ">");
+            html.push("<img src='" + item.image.thumbnail.contentUrl +
+                "&h=" + height + "&w=" + width + "' width=" + width + " height=" + height + ">");
         }
         html.push("<a href='" + item.url + "'>" + item.name + "</a>");
         if (item.category) html.push(" - " + item.category);
@@ -123,7 +123,7 @@ searchItemRenderers = {
         return html.join("");
     },
     // Render image result using thumbnail.
-    images: function(item, section, index, count) {
+    images: function (item, section, index, count) {
         var height = 60;
         var width = Math.round(height * item.thumbnail.width / item.thumbnail.height);
         var html = [];
@@ -134,19 +134,19 @@ searchItemRenderers = {
         }
         html.push("<a href='" + item.hostPageUrl + "'>");
         var title = escapeQuotes(item.name) + "\n" + getHost(item.hostPageDisplayUrl);
-        html.push("<img src='"+ item.thumbnailUrl + "&h=" + height + "&w=" + width +
+        html.push("<img src='" + item.thumbnailUrl + "&h=" + height + "&w=" + width +
             "' height=" + height + " width=" + width + " title='" + title + "' alt='" + title + "'>");
         html.push("</a>");
         return html.join("");
     },
     // Render video result using thumbnail.
-    videos: function(item, section, index, count) {
+    videos: function (item, section, index, count) {
         // Videos are rendered like images.
         return searchItemRenderers.images(item, section, index, count);
     },
-    relatedSearches: function(item, section, index, count) {
+    relatedSearches: function (item, section, index, count) {
         var html = [];
-        if (section !== "sidebar") html.push(index === 0 ? "<h2>Related</h2>": " - ");
+        if (section !== "sidebar") html.push(index === 0 ? "<h2>Related</h2>" : " - ");
         else html.push("<p class='relatedSearches'>");
         html.push("<a href='#' onclick='return doRelatedSearch(&quot;" +
             escapeQuotes(item.text) + "&quot;)'>");
@@ -172,7 +172,7 @@ function renderResultsItems(section, results) {
             // This ranking item refers to ONE result of the specified type.
             if ("resultIndex" in item) {
                 html.push(render(results[type].value[item.resultIndex], section));
-            // This ranking item refers to ALL results of the specified type.
+                // This ranking item refers to ALL results of the specified type.
             } else {
                 var len = results[type].value.length;
                 for (var j = 0; j < len; j++) {
@@ -197,7 +197,7 @@ function renderSearchResults(results) {
     showDiv("paging2", pagingLinks);
 
     // For each possible section, render the resuts from that section.
-    for (section in {pole: 0, mainline: 0, sidebar: 0}) {
+    for (section in { pole: 0, mainline: 0, sidebar: 0 }) {
         if (results.rankingResponse[section])
             showDiv(section, renderResultsItems(section, results));
     }
@@ -218,7 +218,7 @@ function handleOnLoad() {
     // Try to parse the JSON results.
     try {
         if (json.length) jsobj = JSON.parse(json);
-    } catch(e) {
+    } catch (e) {
         renderErrorMessage("Invalid JSON response");
     }
 
@@ -300,12 +300,12 @@ function bingWebSearch(query, options, key) {
     request.addEventListener("load", handleOnLoad);
 
     // Event handler for erorrs.
-    request.addEventListener("error", function() {
+    request.addEventListener("error", function () {
         renderErrorMessage("Error completing request");
     });
 
     // Event handler for aborted request.
-    request.addEventListener("abort", function() {
+    request.addEventListener("abort", function () {
         renderErrorMessage("Request aborted");
     });
 
@@ -400,5 +400,151 @@ function doPrevSearchPage() {
         return bingWebSearch(query, bingSearchOptions(bing), getSubscriptionKey());
     }
     alert("You're already at the beginning!");
+    return false;
+}
+
+const PRIMING = true;
+getSubscriptionKey_AC = function () {
+    var COOKIE = "bing-autosuggest-api-key";   // name used to store API key in key/value storage
+    function findCookie(name) {
+        var cookies = document.cookie.split(";");
+        for (var i = 0; i < cookies.length; i++) {
+            var keyvalue = cookies[i].split("=");
+            if (keyvalue[0].trim() === name) {
+                return keyvalue[1];
+            }
+        }
+        return "";
+    }
+    function getSubscriptionKeyCookie_AC() {
+        var key = findCookie(COOKIE);
+        while (key.length !== 32) {
+            key = prompt("Enter Bing Autosuggest API subscription key:", "").trim();
+            var expiry = new Date();
+            expiry.setFullYear(expiry.getFullYear() + 2);
+            document.cookie = COOKIE + "=" + key.trim() + "; expires=" + expiry.toUTCString();
+        }
+        return key;
+    }
+    function getSubscriptionKeyLocalStorage_AC() {
+        var key = localStorage.getItem(COOKIE) || "";
+        while (key.length !== 32)
+            key = prompt("Enter Bing Autosuggest API subscription key:", "").trim();
+        localStorage.setItem(COOKIE, key)
+        return key;
+    }
+    function getSubscriptionKey_AC(invalidate) {
+        if (invalidate) {
+            try {
+                localStorage.removeItem(COOKIE);
+            } catch (e) {
+                document.cookie = COOKIE + "=";
+            }
+        } else {
+            try {
+                return getSubscriptionKeyLocalStorage_AC();
+            } catch (e) {
+                return getSubscriptionKeyCookie_AC();
+            }
+        }
+    }
+    return getSubscriptionKey;
+}();
+
+function pre(text) {
+    return "<pre>" + text.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</pre>"
+}
+
+var primeterms = [" actual proof", " analysis", " comparison", " data", " evidence", " principle", " research", " stats", " survey"];
+
+function addPrimeTerms_AC(suggestions) {
+    var results = [];
+    for (var i = 0; i < 3; i++) {     //replace only 4 items 
+        var prime = primeterms[Math.floor(Math.random() * primeterms.length)];
+        var inputText = document.getElementById("myInput").value;
+        var newterm = inputText.concat(prime);
+        results.push(newterm);
+    }
+    //replace last 4 elements with prime terms
+    temp = suggestions.slice(0, 3 + 1);
+    results = temp.concat(results);
+
+    return results;
+}
+
+function renderResultsItems_AC(results) { //suggestionGroup/searchSuggestions/query
+    var items = results.suggestionGroups[0].searchSuggestions;
+    var suggestions = [];
+
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        suggestions.push(item.displayText);
+    }
+
+    if (PRIMING) {
+        suggestions = addPrimeTerms_AC(suggestions);
+    }
+
+    var listContainer = document.getElementById("suggestList");
+    listContainer.innerHTML = "";
+    for (var i = 0; i < suggestions.length; i++) {
+        var suggestion = suggestions[i];
+        var newItem = document.createElement("li");
+        var newClick = document.createElement("a");
+        newClick.setAttribute("href", "#");
+        newClick.setAttribute("onClick", "return elementClicked('" + suggestion + "');");
+        newClick.appendChild(document.createTextNode(suggestion));
+        newItem.appendChild(newClick)
+        newItem.setAttribute("id", suggestion);
+        listContainer.appendChild(newItem);
+    }
+}
+
+
+function renderSearchResults_AC(results) {
+
+    //document.getElementById("results").innerHTML = pre(JSON.stringify(results, null, 2));
+    //showDiv("results", renderResultsItems(results));
+    renderResultsItems_AC(results);
+    //document.getElementById("list").innerHTML = pre(JSON.stringify(results, null, 2));
+
+    //autocomplete(document.getElementById("myInput"), html);
+
+}
+
+function renderErrorMessage_AC(message, code) {
+    if (code)
+        document.getElementById("results").innerHTML = "<pre>Status " + code + ": " + message + "</pre>";
+    else
+        document.getElementById("results").innerHTML = "<pre>" + message + "</pre>";
+}
+
+function bingAutosuggest_AC(query, key) {
+    var endpoint = "https://api.cognitive.microsoft.com/bing/v7.0/Suggestions";
+    var request = new XMLHttpRequest();
+    try {
+        request.open("GET", endpoint + "?q=" + encodeURIComponent(query));
+    }
+    catch (e) {
+        renderErrorMessage_AC("Bad request");
+        return false;
+    }
+    request.setRequestHeader("Ocp-Apim-Subscription-Key", key);
+    request.addEventListener("load", function () {
+        if (this.status === 200) {
+            renderSearchResults_AC(JSON.parse(this.responseText));
+        }
+        else {
+            if (this.status === 401) getSubscriptionKey_AC(true);
+            renderErrorMessage_AC(this.statusText, this.status);
+        }
+    });
+    request.addEventListener("error", function () {
+        renderErrorMessage_AC("Network error");
+    });
+    request.addEventListener("abort", function () {
+        renderErrorMessage_AC("Request aborted");
+    });
+    request.send();
     return false;
 }

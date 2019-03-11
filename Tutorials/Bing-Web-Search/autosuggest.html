@@ -17,6 +17,7 @@
 </style>
 
 <script type="text/javascript">
+const PRIMING = true;
 getSubscriptionKey = function() {
     var COOKIE = "bing-autosuggest-api-key";   // name used to store API key in key/value storage
     function findCookie(name) {
@@ -80,49 +81,37 @@ function addPrimeTerms(suggestions) {
     }
     //replace last 4 elements with prime terms
     temp = suggestions.slice(0,3+1);
-    results = results.concat(temp);
+    results = temp.concat(results);
 
     return results;
 }
 
-//var html = [];
 function renderResultsItems(results) { //suggestionGroup/searchSuggestions/query
-   // var items = results.suggestionGroups[0].searchSuggestions[1].displayText;
     var items = results.suggestionGroups[0].searchSuggestions;
+    var suggestions = [];
 
-    
-   
-   // html.push(pre(JSON.stringify(items, null, 2)));
-    //document.getElementById("prac").innerHTML = html;
-    html = [];
-    var listContainer = document.getElementById("suggestList");
-    listContainer.innerHTML = "";        
     for (var i = 0; i < items.length; i++) {
         var item = items[i];
-        // Niels Code:
+        suggestions.push(item.displayText);
+    }
+
+    if(PRIMING){
+        suggestions = addPrimeTerms(suggestions);
+    }
+   
+    var listContainer = document.getElementById("suggestList");
+    listContainer.innerHTML = "";        
+    for (var i = 0; i < suggestions.length; i++) {
+        var suggestion = suggestions[i];
         var newItem = document.createElement("li");
         var newClick = document.createElement("a");
         newClick.setAttribute("href", "#");
-        newClick.setAttribute("onClick", "elementClicked('" + item.displayText + "')");
-        newClick.appendChild(document.createTextNode(item.displayText));
+        newClick.setAttribute("onClick", "elementClicked('" + suggestion + "')");
+        newClick.appendChild(document.createTextNode(suggestion));
         newItem.appendChild(newClick)
-        newItem.setAttribute("id", item.displayText);
+        newItem.setAttribute("id", suggestion);
         listContainer.appendChild(newItem);
-
-        // Sharon Code:
-        //html.push(item.displayText);
-        //html.join("\n\n");
     }
-
-    autocomplete(document.getElementById("myInput"), html);
-    for (var i = 0; i < html.length; i++) {
-        var opt = html[i];
-        var el = document.createElement("option");
-        el.textContent = opt;
-        el.value = opt;
-        document.getElementById("list").appendChild(el);
-    }
-    document.getElementById("prac").innerHTML = html;
 }
    
     
@@ -192,18 +181,7 @@ function bingAutosuggest(query, key) {
         <select id="list"></select>
     </div>
 </form>
-<ul id="suggestList">
-    
-</ul>
 
-<script>
-    function elementClicked(id){
-        var searchBar = document.getElementById("myInput");
-        var listItem = document.getElementById(id);
-        searchBar.value = (listItem.textContent || listItem.innerText);
-        return bingAutosuggest(document.forms.bing.query.value, getSubscriptionKey())
-    }
-</script>
 
 <h2>Results</h2>
 <div id="results">
